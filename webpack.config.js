@@ -35,6 +35,8 @@ function getConfig() {
     'toolbox'
   ].join('!');
 
+  var name = isDev ? '[name]' : '[name].[hash]';
+
   var config = {
     entry: [
       './client/index.js',
@@ -42,7 +44,7 @@ function getConfig() {
     ],
     output: {
       path: path.join(__dirname, 'dist/public/'),
-      filename: '[name].[hash].js'
+      filename: name + '.js'
     },
     debug: isDev,
     resolve: {
@@ -77,7 +79,7 @@ function getConfig() {
     config.plugins.push(new webpack.NoErrorsPlugin());
     config.entry.push('webpack-hot-middleware/client');
   } else {
-    config.plugins.push(new ExtractTextPlugin('[name].[hash].css'));
+    config.plugins.push(new ExtractTextPlugin(name + '.css'));
   }
 
   return config;
