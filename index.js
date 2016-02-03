@@ -1,2 +1,2 @@
-require("babel-polyfill");
-require("./lib/index.js");
+require('babel-polyfill');
+require('./dist/index.js');

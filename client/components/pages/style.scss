@@ -1,0 +1,15 @@
+.root {
+  width: calc(100% + 1.6rem);
+
+  .slider {
+    display: flex;
+    flex-direction: row;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .page {
+    flex: 1 0 auto;
+    width: calc(100%);
+    padding-right: 1.6rem;
+  }
+}

@@ -1,0 +1,39 @@
+.root {
+  position: absolute;
+  padding: 2rem;
+  padding-top: 8.4rem;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .card {
+    width: 100%;
+    max-width: 35rem;
+    margin-bottom: 10rem;
+  }
+
+  .errorInactive {
+    display: none;
+  }
+
+  .errorActive {
+    background-color: $palette-red-a100;
+  }
+
+  .submit {
+    text-align: right;
+  }
+
+  .loadingPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    h6 {
+      margin-top: 2rem;
+    }
+  }
+}
