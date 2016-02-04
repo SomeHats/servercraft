@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import jwt from 'express-jwt';
 import {readFileSync} from 'fs';
+import path from 'path';
 import * as yggdrasil from '../minecraft/yggdrasil';
 import bodyParser from 'body-parser';
 import validator from 'express-validator';
@@ -13,7 +14,7 @@ bluebird.promisifyAll(jwt);
 
 let debug = createDebug('servercraft:api');
 let router = Router();
-let secret = readFileSync('./secret.key', {encoding: 'utf-8'});
+let secret = readFileSync(path.resolve(__dirname, '../../secret.key'), {encoding: 'utf-8'});
 
 router.use(bodyParser.json());
 router.use(validator());
