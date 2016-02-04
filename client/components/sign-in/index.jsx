@@ -29,6 +29,7 @@ export default class SignIn extends React.Component {
   }
 
   onSubmit() {
+    this.setState({password: ''});
     UserActions.login(this.state.username, this.state.password);
   }
 
@@ -85,7 +86,6 @@ export default class SignIn extends React.Component {
     return (
       <Page className={style.loadingPage}>
         <ProgressBar type='circular' mode='indeterminate' />
-        <h6>Signing In...</h6>
       </Page>
     );
   }

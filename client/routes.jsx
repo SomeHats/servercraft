@@ -1,14 +1,16 @@
 import React from 'react';
 import {Router, Route, hashHistory} from 'react-router';
-import AppBar from 'react-toolbox/lib/app_bar';
-import SignIn from './components/sign-in/';
 import UserStore from './stores/user-store';
 import UserActions from './actions/user-actions';
+import AppBar from './components/app-bar';
+import SignIn from './components/sign-in';
+import Home from './components/home'
 
 export default class Routes extends React.Component {
   constructor() {
     super();
     this.state = {user: {}};
+    this.onSignOut = this.onSignOut.bind(this);
   }
 
   componentDidMount() {
@@ -20,17 +22,29 @@ export default class Routes extends React.Component {
     this.unsubscribe();
   }
 
+  onSignOut() {
+    UserActions.logout(UserStore.token);
+  }
+
   render() {
     return (
       <div>
-        <AppBar fixed>
-          <h4>ServerCraft? loading: {this.state.loading + ''}, loggedIn: {this.state.loggedIn + ''}, user: {this.state.user.displayName}</h4>
-        </AppBar>
-        <Router history={hashHistory}>
-          <Route path='/' component={SignIn} />
-        </Router>
+        <AppBar loggedIn={this.state.loggedIn} user={this.state.user} onSignOut={this.onSignOut} />
+        {this.state.loggedIn ? this.renderApp() : this.renderLogin()}
       </div>
     );
+  }
+
+  renderApp() {
+    return (
+      <Router history={hashHistory}>
+        <Route path='/' component={Home} />
+      </Router>
+    );
+  }
+
+  renderLogin() {
+    return <SignIn />;
   }
 }
 

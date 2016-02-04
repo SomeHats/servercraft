@@ -103,4 +103,18 @@ router.post('/token', wrap(async (req, res) => {
   res.json({token, user: user.toJSON()});
 }));
 
+// POST /api/logout {token: JWT}
+// Invalidate a user token
+router.post('/logout', wrap(async (req, res) => {
+  // Invalidate the token with Mojang
+  await yggdrasil.invalidate(req.user.accessToken, req.user.clientToken);
+
+  // Delete our copy of the key in the DB:
+  await AccessKey.forge({id: req.user.accessToken}).destroy();
+
+  // That's it!
+  debug('invalidate token', {clientToken: req.user.clientToken});
+  res.json({invalidated: true});
+}));
+
 export default router;

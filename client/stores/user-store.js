@@ -1,41 +1,53 @@
 import Reflux from 'reflux';
 import UserActions from '../actions/user-actions';
 
+const formatError = error => {
+  if (typeof error === 'string') return error;
+  if (error && error.data && error.data.message) return error.data.message;
+  if (error && error.message) return error.message;
+  return 'Unknown error';
+};
+
 let UserStore = Reflux.createStore({
   listenables: UserActions,
 
   init() {
-    this.listenTo(UserActions.loadUser, this.onLoadUser);
-    this.listenTo(UserActions.login, this.onLoadUser);
-    this.listenTo(UserActions.loadUser.completed, this.onLoadUserCompleted);
-    this.listenTo(UserActions.login.completed, this.onLoadUserCompleted);
-    this.listenTo(UserActions.loadUser.failed, this.onLoadUserFailed);
-    this.listenTo(UserActions.login.failed, this.onLoadUserFailed);
+    this.listenTo(UserActions.loadUser, this.onLogin);
+    this.listenTo(UserActions.loadUser.completed, this.onLoginCompleted);
+    this.listenTo(UserActions.loadUser.failed, this.onLoginFailed);
   },
 
-  onLoadUser() {
+  onLogin() {
     this.trigger({loading: true, error: null});
   },
 
-  onLoadUserCompleted({user, token}) {
+  onLoginCompleted({user, token}) {
     this.user = user;
     this.token = token;
     this.loggedIn = true;
     this.trigger({loading: false, loggedIn: true, user, token});
   },
 
-  onLoadUserFailed(error) {
+  onLoginFailed(error) {
     this.user = null;
     this.token = null;
     this.loggedIn = false;
-    if (error && error.data && error.data.message) {
-      error = error.data.message;
-    } else if (error && error.message) {
-      error = error.message;
-    } else if (error && typeof error !== 'string') {
-      error = 'Unknown error';
-    }
-    this.trigger({loading: false, loggedIn: false, error});
+    this.trigger({loading: false, loggedIn: false, error: error ? formatError(error) : null});
+  },
+
+  onLogout() {
+    this.user = null;
+    this.token = null;
+    this.loggedIn = null;
+    this.trigger({loading: true, loggedIn: false, error: null, user: null, token: null});
+  },
+
+  onLogoutCompleted() {
+    this.trigger({loading: false});
+  },
+
+  onLogoutFailed(error) {
+    this.trigger({loading: false, error: formatError(error)});
   }
 });
 
