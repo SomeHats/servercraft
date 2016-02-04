@@ -1,12 +1,13 @@
 import http from 'axios';
 import React from 'react';
-
 import style from './style';
 import Button from 'react-toolbox/lib/button';
 import {Card, CardTitle, CardText} from 'react-toolbox/lib/card';
 import Input from 'react-toolbox/lib/input';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 import {Page, Pages} from '../pages';
+import UserStore from '../../stores/user-store';
+import UserActions from '../../actions/user-actions';
 
 export default class SignIn extends React.Component {
   constructor() {
@@ -16,28 +17,19 @@ export default class SignIn extends React.Component {
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
 
-    this.state = {page: 0, username: '', password: ''};
+    this.state = {loading: true, username: '', password: ''};
   }
 
-  async onSubmit() {
-    this.setState({page: 1, error: null});
+  componentDidMount() {
+    this.unsubscribe = UserStore.listen(state => this.setState(state));
+  }
 
-    try {
-      let response = await http.post('/api/login', {
-        username: this.state.username,
-        password: this.state.password
-      });
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
 
-      console.log(response);
-    } catch(e) {
-      if (e.data) {
-        this.setState({error: e.data.message});
-      } else {
-        this.setState({error: e.message});
-      }
-    } finally {
-      this.setState({page: 0, password: ''});
-    }
+  onSubmit() {
+    UserActions.login(this.state.username, this.state.password);
   }
 
   onChangeUsername(username) {
@@ -49,11 +41,13 @@ export default class SignIn extends React.Component {
   }
 
   render() {
+    let page = this.state.loading ? 1 : 0;
+
     return (
       <div className={style.root}>
         <Card className={style.card}>
           <CardTitle title='Sign In to ServerCraft' subtitle='Use your Mojang/Minecraft account'/>
-          <Pages active={this.state.page}>
+          <Pages active={page}>
             {this.renderLoginForm()}
             {this.renderLoading()}
           </Pages>

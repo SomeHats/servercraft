@@ -39,6 +39,7 @@ function getConfig() {
 
   var config = {
     entry: [
+      './client/helpers/plugins.js',
       './client/index.js',
       './client/styles/common.scss'
     ],
