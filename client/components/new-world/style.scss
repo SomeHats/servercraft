@@ -1,0 +1,26 @@
+.root {
+  width: calc(100% - 3rem);
+  max-width: 400px;
+
+  [role=body] {
+    overflow-y: initial !important;
+    position: relative;
+    z-index: 2;
+  }
+
+  [role=navigation] {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.loader {
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.versionSelectItem {
+  strong {
+    display: block;
+  }
+}

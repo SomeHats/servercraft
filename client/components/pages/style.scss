@@ -1,5 +1,6 @@
 .root {
-  width: calc(100% + 1.6rem);
+  $padding: 2.4rem;
+  width: calc(100% + #{$padding});
 
   .slider {
     display: flex;
@@ -10,6 +11,6 @@
   .page {
     flex: 1 0 auto;
     width: calc(100%);
-    padding-right: 1.6rem;
+    padding-right: $padding;
   }
 }

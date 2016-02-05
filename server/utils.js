@@ -30,3 +30,9 @@ export const mapObj = (obj, fn) => {
   }
   return newObj;
 }
+
+export const arrayToObjBy = (array, fn) => {
+  let obj = {};
+  for (item of array) obj[fn(item)] = item;
+  return obj;
+}

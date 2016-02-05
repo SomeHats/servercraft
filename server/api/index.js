@@ -9,6 +9,7 @@ import path from 'path';
 
 import {User, AccessKey} from '../db';
 import {wrap, ValidationError} from '../utils';
+import {getVersions} from '../minecraft/versions';
 import * as yggdrasil from '../minecraft/yggdrasil';
 
 bluebird.promisifyAll(jwt);
@@ -117,6 +118,10 @@ router.post('/logout', wrap(async (req, res) => {
   // That's it!
   debug('invalidate token', {clientToken: req.user.clientToken});
   res.json({invalidated: true});
+}));
+
+router.get('/versions', wrap(async (req, res) => {
+  res.json(await getVersions());
 }));
 
 export default router;

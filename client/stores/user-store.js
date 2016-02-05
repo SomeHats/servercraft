@@ -1,13 +1,6 @@
 import Reflux from 'reflux';
-
+import {formatError} from '../helpers/utils';
 import UserActions from '../actions/user-actions';
-
-const formatError = error => {
-  if (typeof error === 'string') return error;
-  if (error && error.data && error.data.message) return error.data.message;
-  if (error && error.message) return error.message;
-  return 'Unknown error';
-};
 
 let UserStore = Reflux.createStore({
   listenables: UserActions,

@@ -2,7 +2,7 @@ import React from 'react';
 import {Router, Route, hashHistory} from 'react-router';
 
 import AppBar from './components/app-bar';
-import Home from './components/home'
+import Home from './components/home';
 import SignIn from './components/sign-in';
 import UserActions from './actions/user-actions';
 import UserStore from './stores/user-store';
@@ -39,7 +39,7 @@ export default class Routes extends React.Component {
   renderApp() {
     return (
       <Router history={hashHistory}>
-        <Route path='/' component={Home} />
+        <Route path='*' component={Home} />
       </Router>
     );
   }
