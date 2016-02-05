@@ -1,14 +1,15 @@
+import bluebird from 'bluebird';
+import bodyParser from 'body-parser';
+import createDebug from 'debug';
 import {Router} from 'express';
 import jwt from 'express-jwt';
+import validator from 'express-validator';
 import {readFileSync} from 'fs';
 import path from 'path';
-import * as yggdrasil from '../minecraft/yggdrasil';
-import bodyParser from 'body-parser';
-import validator from 'express-validator';
-import bluebird from 'bluebird';
-import createDebug from 'debug';
+
 import {User, AccessKey} from '../db';
 import {wrap, ValidationError} from '../utils';
+import * as yggdrasil from '../minecraft/yggdrasil';
 
 bluebird.promisifyAll(jwt);
 

@@ -1,13 +1,14 @@
-import http from 'axios';
 import React from 'react';
-import style from './style';
+
 import Button from 'react-toolbox/lib/button';
 import {Card, CardTitle, CardText} from 'react-toolbox/lib/card';
 import Input from 'react-toolbox/lib/input';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
+
 import {Page, Pages} from '../pages';
-import UserStore from '../../stores/user-store';
 import UserActions from '../../actions/user-actions';
+import UserStore from '../../stores/user-store';
+import style from './style';
 
 export default class SignIn extends React.Component {
   constructor() {

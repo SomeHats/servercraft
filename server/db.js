@@ -1,7 +1,8 @@
-import knex from 'knex';
-import createDebug from 'debug';
 import Bookshelf from 'bookshelf';
+import createDebug from 'debug';
 import jwt from 'jsonwebtoken';
+import knex from 'knex';
+
 import {camelize, snakeify, mapObj} from './utils';
 
 let debug = createDebug('servercraft:db');

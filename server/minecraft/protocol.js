@@ -79,7 +79,7 @@ export const handshake = (host, port, version = 47) => packet([
 
 export const ping = (pingId = null) => packet([
   varint(1),
-  int64(pingId = pingId || Math.floor(Math.random() * ((2 ** 32) - 1))),
+  int64(pingId = pingId || Math.floor(Math.random() * ((2 ** 32) - 1)))
 ]);
 
 export const status = () => packet([varint(0)]);

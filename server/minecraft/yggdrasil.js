@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import http from 'axios';
 import createDebug from 'debug';
 

@@ -1,10 +1,11 @@
 import React from 'react';
 import {Router, Route, hashHistory} from 'react-router';
-import UserStore from './stores/user-store';
-import UserActions from './actions/user-actions';
+
 import AppBar from './components/app-bar';
-import SignIn from './components/sign-in';
 import Home from './components/home'
+import SignIn from './components/sign-in';
+import UserActions from './actions/user-actions';
+import UserStore from './stores/user-store';
 
 export default class Routes extends React.Component {
   constructor() {

@@ -1,8 +1,9 @@
+import errorHandler from 'api-error-handler';
 import express from 'express';
+import morgan from 'morgan';
 import path from 'path';
 import serveStatic from 'serve-static';
-import morgan from 'morgan';
-import errorHandler from 'api-error-handler';
+
 import api from './api';
 
 let app = express();
@@ -12,7 +13,7 @@ app.use(morgan('short'));
 const publicPath = path.join(__dirname, 'public');
 const staticDev = (app) => {
   let config = require('../webpack.config.js'),
-    webpack = require('webpack')(config);
+      webpack = require('webpack')(config);
 
   app.use(require('webpack-dev-middleware')(webpack, {publicPath: '/'}));
 

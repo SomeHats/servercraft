@@ -1,4 +1,5 @@
 import React from 'react';
+
 import style from './style';
 
 export class Pages extends React.Component {

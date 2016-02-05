@@ -1,4 +1,5 @@
 import Reflux from 'reflux';
+
 import UserActions from '../actions/user-actions';
 
 const formatError = error => {

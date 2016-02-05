@@ -4,7 +4,7 @@ import * as p from './protocol';
 
 const debug = createDebug('servercraft:query');
 
-class TimeoutError extends Error {};
+class TimeoutError extends Error {}
 
 export class MinecraftServerStatus {
   constructor(host, port = 25565) {
@@ -24,7 +24,7 @@ export class MinecraftServerStatus {
 
   async ping() {
     try {
-      let {packetId, data} = await this.request(p.ping());
+      let {packetId} = await this.request(p.ping());
       if (packetId !== 1) {
         throw new Error(`Received invalid ping response: ${packetId}`);
       }
@@ -69,14 +69,3 @@ export class MinecraftServerStatus {
     });
   }
 }
-
-async function main() {
-  let server = new MinecraftServer('dytry.ch');
-  if (await server.ping()) {
-    console.log(await server.getStatus());
-  } else {
-    console.log('Server is down');
-  }
-}
-
-main();
