@@ -9,12 +9,25 @@ let WorldStore = Reflux.createStore({
     this.worlds = [];
   },
 
+  onLoad() {
+    this.trigger({loading: true, loadError: null});
+  },
+
+  onLoadCompleted(worlds) {
+    this.worlds = worlds;
+    this.trigger({loading: false, worlds});
+  },
+
+  onLoadFailed(error) {
+    this.trigger({loading: false, loadError: formatError(error)});
+  },
+
   onCreate() {
     this.trigger({creating: true});
   },
 
   onCreateProgressed({percentage}) {
-    this.trigger({createProgress: percentage});
+    this.trigger({createProgress: percentage, createError: null});
   },
 
   onCreateCompleted(world) {
@@ -23,7 +36,7 @@ let WorldStore = Reflux.createStore({
   },
 
   onCreateFailed(error) {
-    this.trigger({error: formatError(error), creating: false, createProgress: null});
+    this.trigger({createError: formatError(error), creating: false, createProgress: null});
   }
 });
 

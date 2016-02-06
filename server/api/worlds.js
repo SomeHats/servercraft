@@ -40,7 +40,7 @@ const writeProperties = (worldPath, properties, name = 'server.properties') => {
   return fs.writeFileAsync(filename, serverProperties.stringify(properties), {encoding: 'utf-8'});
 };
 
-export default (api) => {
+export default (api, wrap) => {
   api.realtime('/new-world', async (data, connection, progressHandler) => {
     let {name, version, message} = data;
     checkString(name, 'server name');
@@ -85,4 +85,9 @@ export default (api) => {
 
     return world.toJSON();
   });
+
+  api.get('/worlds', wrap(async (req, res) => {
+    let worlds = await World.fetchAll();
+    res.json(worlds.toJSON());
+  }));
 };

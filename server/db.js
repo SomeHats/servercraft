@@ -29,7 +29,10 @@ let BaseModel = bookshelf.Model.extend({
 
   // Convert snake_case to camelCase when we recieve stuff from the database
   parse(attrs) {
-    return mapObj(attrs, (key, value) => [camelize(key), value]);
+    attrs = mapObj(attrs, (key, value) => [camelize(key), value]);
+    if (attrs.createdAt) attrs.createdAt = new Date(attrs.createdAt);
+    if (attrs.updatedAt) attrs.updatedAt = new Date(attrs.updatedAt);
+    return attrs;
   },
 
   // Convert camelCase to snake_case when sending stuff to the database

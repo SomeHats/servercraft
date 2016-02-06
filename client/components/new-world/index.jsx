@@ -63,6 +63,7 @@ export default class NewWorld extends React.Component {
   }
 
   onWorldsUpdate(update) {
+    if (update.createError) this.setState({error: update.creatingError});
     if (this.state.creating && !update.creating && update.world) {
       this.props.onClose();
       // Let the close animation play before updating

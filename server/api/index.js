@@ -135,14 +135,13 @@ router.get('/versions', wrap(async (req, res) => {
   res.json(await getVersions());
 }));
 
+attachWorldsApi(router, wrap);
 
-attachWorldsApi(router);
 const authRealtime = async (connection) => {
   let {token} = querystring.parse(url.parse(connection.url).query),
       reqUser = AccessKey.parseToken(token, secret);
   let {user} = await validateToken(reqUser, false);
   connection.user = user;
-  console.log('authed realtime connection', user);
   return true;
 };
 
