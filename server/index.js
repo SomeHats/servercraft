@@ -1,12 +1,14 @@
 import errorHandler from 'api-error-handler';
+import {createServer} from 'http';
 import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import serveStatic from 'serve-static';
 
-import api from './api';
+import attachApi from './api';
 
 let app = express();
+let server = createServer(app);
 
 app.use(morgan('short'));
 
@@ -30,7 +32,7 @@ if (process.env.NODE_ENV !== 'production') {
   staticProduction(app);
 }
 
-app.use('/api', api);
+attachApi(app, server);
 app.use(errorHandler());
 
-app.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 3000);

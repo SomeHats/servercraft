@@ -1,6 +1,8 @@
 import Reflux from 'reflux';
 import {get} from '../helpers/api';
 
+window.api = require('../helpers/api');
+
 const VersionActions = Reflux.createActions({
   loadVersions: {asyncResult: true}
 });

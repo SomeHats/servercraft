@@ -15,3 +15,12 @@ export async function getVersions() {
     versions: data.versions.filter(version => version.type === 'release' && canRun(version.id))
   };
 }
+
+export async function info(version) {
+  let {versions} = await getVersions();
+  let versionInfo = versions.filter(({id}) => id === version)[0];
+  if (!(versionInfo && versionInfo.url)) return false;
+
+  let {data} = await http.get(versionInfo.url);
+  return data;
+}

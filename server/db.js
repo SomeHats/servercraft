@@ -53,6 +53,10 @@ export let User = BaseModel.extend({
     return this.hasMany(AccessKey);
   },
 
+  ownedWorlds() {
+    return this.hasMany(World, 'owner_id');
+  },
+
   format(attrs) {
     if (attrs.name) attrs.name = attrs.name.toLowerCase();
     return BaseModel.prototype.format(attrs);
@@ -68,5 +72,21 @@ export let AccessKey = BaseModel.extend({
 
   getToken(clientToken, secret) {
     return jwt.sign({clientToken, accessToken: this.id}, secret, {issuer: 'servercraft'});
+  }
+}, {
+  parseToken(token, secret) {
+    return jwt.verify(token, secret);
+  }
+});
+
+export let World = BaseModel.extend({
+  tableName: 'worlds',
+
+  owner() {
+    return this.belongsTo(User, 'owner_id');
+  }
+}, {
+  getId(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
   }
 });

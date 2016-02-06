@@ -2,3 +2,4 @@ node_modules
 secret.key
 dist
 *.sqlite
+servercraft-worlds

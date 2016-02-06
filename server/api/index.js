@@ -6,11 +6,15 @@ import jwt from 'express-jwt';
 import validator from 'express-validator';
 import {readFileSync} from 'fs';
 import path from 'path';
+import url from 'url';
+import querystring from 'querystring';
 
 import {User, AccessKey} from '../db';
 import {wrap, ValidationError} from '../utils';
 import {getVersions} from '../minecraft/versions';
 import * as yggdrasil from '../minecraft/yggdrasil';
+import * as realtime from './realtime';
+import attachWorldsApi from './worlds';
 
 bluebird.promisifyAll(jwt);
 
@@ -38,6 +42,9 @@ router.use(jwt({
     return null;
   }
 }).unless({path: ['/api/login']}));
+
+// Allow defining realtime routes
+router.realtime = realtime.on;
 
 // POST /api/login {username: string, password: string}
 // Take a users mojang login details and return a token and some user data
@@ -77,20 +84,20 @@ router.post('/login', wrap(async (req, res) => {
 
 // POST /api/token {token: JWT}
 // Validate a token and return the associated user data
-router.post('/token', wrap(async (req, res) => {
+const validateToken = async (reqUser, destroyOld = true) => {
   // Check with the mojang auth server that the tokens are still valid. Mojand might give us new tokens
-  let {accessToken, clientToken} = await yggdrasil.validate(req.user.accessToken, req.user.clientToken);
+  let {accessToken, clientToken} = await yggdrasil.validate(reqUser.accessToken, reqUser.clientToken);
 
   // Grab our old key+user relation from the db
-  let accessKey = await AccessKey.forge({id: req.user.accessToken}).fetch({withRelated: 'user'});
+  let accessKey = await AccessKey.forge({id: reqUser.accessToken}).fetch({withRelated: 'user'});
   let user = accessKey.related('user');
 
   // If mojang has sent us updates tokens...
-  if (accessToken !== req.user.accessToken || clientToken !== req.user.clientToken) {
+  if (accessToken !== reqUser.accessToken || clientToken !== reqUser.clientToken) {
     debug('validate:new token', {clientToken, user: user.get('name')});
 
     // ... forget the old one ...
-    await accessKey.destroy();
+    if (destroyOld) await accessKey.destroy();
 
     // ... and save the new one
     accessKey = await AccessKey.forge({
@@ -103,6 +110,10 @@ router.post('/token', wrap(async (req, res) => {
 
   // Generate a JWT - itll be the same as the old one unless the keys changed
   let token = accessKey.getToken(clientToken, secret);
+  return {token, user};
+};
+router.post('/token', wrap(async (req, res) => {
+  let {token, user} = await validateToken(req.user);
   res.json({token, user: user.toJSON()});
 }));
 
@@ -124,4 +135,18 @@ router.get('/versions', wrap(async (req, res) => {
   res.json(await getVersions());
 }));
 
-export default router;
+
+attachWorldsApi(router);
+const authRealtime = async (connection) => {
+  let {token} = querystring.parse(url.parse(connection.url).query),
+      reqUser = AccessKey.parseToken(token, secret);
+  let {user} = await validateToken(reqUser, false);
+  connection.user = user;
+  console.log('authed realtime connection', user);
+  return true;
+};
+
+export default (app, server) => {
+  app.use('/api', router);
+  realtime.attach(server, authRealtime);
+};
