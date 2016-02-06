@@ -14,7 +14,7 @@ export default class Home extends React.Component {
     return (
       <div className={styles.root}>
         <Button raised label="New World" onClick={() => this.setState({creatingNew: true})} />
-        <NewWorld active={this.state.creatingNew} onCancel={() => this.setState({creatingNew: false})} />
+        <NewWorld active={this.state.creatingNew} onClose={() => this.setState({creatingNew: false})} />
       </div>
     );
   }

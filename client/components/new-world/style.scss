@@ -24,3 +24,14 @@
     display: block;
   }
 }
+
+.error {
+  padding: 1.5rem 2.4rem;
+  margin-right: -2.4rem;
+  margin-left: -2.4rem;
+  background-color: $palette-red-a100;
+}
+
+.errorInactive {
+  display: none;
+}

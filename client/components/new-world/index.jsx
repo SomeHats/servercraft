@@ -3,6 +3,8 @@ import React from 'react';
 import {find} from '../../helpers/utils';
 import VersionActions from '../../actions/version-actions';
 import VersionStore from '../../stores/version-store';
+import WorldActions from '../../actions/world-actions';
+import WorldStore from '../../stores/world-store';
 
 import Dialog from 'react-toolbox/lib/dialog';
 import Dropdown from 'react-toolbox/lib/dropdown';
@@ -13,20 +15,24 @@ import styles from './style';
 export default class NewWorld extends React.Component {
   constructor() {
     super();
-    this.state = {
+    this.state = this.initialState = {
       versions: [{id: 'loading', value: 'loading', releaseTime: new Date()}],
       message: 'A Minecraft Server',
-      name: ''
+      name: '',
+      gotVersions: false
     };
     this.onVersionsUpdate = this.onVersionsUpdate.bind(this);
+    this.onWorldsUpdate = this.onWorldsUpdate.bind(this);
     this.onVersionChange = this.onVersionChange.bind(this);
     this.onNameChange = this.onNameChange.bind(this);
     this.onMessageChange = this.onMessageChange.bind(this);
+    this.onCreate = this.onCreate.bind(this);
     this.renderVersionSelectItem = this.renderVersionSelectItem.bind(this);
   }
 
   componentDidMount() {
-    this.unsubscribe = VersionStore.listen(this.onVersionsUpdate);
+    this.unsubscribeVersion = VersionStore.listen(this.onVersionsUpdate);
+    this.unsubscribeWorld = WorldStore.listen(this.onWorldsUpdate);
     if (this.props.active) this.checkVersions();
   }
 
@@ -35,7 +41,8 @@ export default class NewWorld extends React.Component {
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
+    this.unsubscribeVersion();
+    this.unsubscribeWorld();
   }
 
   checkVersions(active) {
@@ -55,6 +62,19 @@ export default class NewWorld extends React.Component {
     this.setState(update);
   }
 
+  onWorldsUpdate(update) {
+    if (this.state.creating && !update.creating && update.world) {
+      this.props.onClose();
+      // Let the close animation play before updating
+      setTimeout(() => {
+        this.setState(update);
+        this.setState(this.initialState);
+      }, 1000);
+      return;
+    }
+    this.setState(update);
+  }
+
   onVersionChange(id) {
     this.setState({selectedVersion: id});
   }
@@ -67,9 +87,13 @@ export default class NewWorld extends React.Component {
     this.setState({message});
   }
 
+  onCreate() {
+    WorldActions.create(this.state.name, this.state.message, this.state.selectedVersion);
+  }
+
   render() {
-    let ready = !this.state.loading && this.state.gotVersions;
-    let cancel = {label: 'Cancel', onClick: this.props.onCancel},
+    let ready = !this.state.loading && !this.state.creating && this.state.gotVersions;
+    let cancel = {label: 'Cancel', onClick: this.props.onClose},
         create = {label: 'Create', onClick: this.onCreate, primary: true, raised: true},
         actions = ready ? [cancel, create] : [cancel];
 
@@ -85,14 +109,24 @@ export default class NewWorld extends React.Component {
   }
 
   renderLoader() {
-    return <div className={styles.loader}>
-      <ProgressBar type='circular' mode='indeterminate' />
-    </div>;
+    let progress = this.state.createProgress,
+        bar;
+    if (typeof progress === 'number') {
+      console.log('render-progress', progress * 100);
+      bar = <ProgressBar type='circular' mode='determinate' value={progress * 100} />;
+    } else {
+      bar = <ProgressBar type='circular' mode='indeterminate' />;
+    }
+
+    return <div className={styles.loader}>{bar}</div>;
   }
 
   renderForm() {
     return (
       <div>
+        <div className={this.state.error ? styles.error : styles.errorInactive}>
+          {this.state.error}
+        </div>
         <Dropdown
           label='Minecraft Version'
           template={this.renderVersionSelectItem}
